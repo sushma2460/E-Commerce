@@ -1,0 +1,159 @@
+# Product Requirements Document (PRD)
+**Product Name:** E-Commerce Platform  
+**Tech Stack:** Next.js (Frontend & SSR APIs), Firebase Authentication (Auth), Firebase Firestore (Database). Image hosting will rely on directly referenced external image URLs.
+
+---
+
+## 1. Executive Summary
+The goal of this project is to build a scalable, high-performance, and secure e-commerce web application. Leveraging Next.js allows for superior Search Engine Optimization (SEO) and fast page loads through Server-Side Rendering (SSR) and Static Site Generation (SSG). Firebase will act as a robust serverless backend to handle real-time data and user authentication seamlessly.
+
+## 2. Target Audience
+*   **Shoppers:** Users looking to browse products, manage a shopping cart, and securely checkout.
+*   **Administrators:** Store owners who need to manage inventory, track orders, and oversee user activity.
+
+---
+
+## 3. Architecture & Tech Stack Details
+*   **Framework:** Next.js (App Router recommended)
+*   **UI/Styling:** Tailwind CSS (for responsive, dynamic, premium UI design)
+*   **Authentication:** Firebase Auth (Email/Password, Google OAuth)
+*   **Database:** Firebase Cloud Firestore (NoSQL Document database)
+*   **Media Storage:** External image URLs directly referenced in the code and database
+*   **Payment Gateway:** Razorpay (Required for processing actual monetary transactions, integrated via Next.js API routes)
+*   **Hosting:** Vercel (Frontend)
+
+---
+
+## 4. End-to-End Feature Specifications
+
+### 4.1. User Authentication & Authorization
+*   **Guest Access:** Can browse products, view categories, and add items to a local cart.
+*   **User Registration/Login:** Users can sign up and log in using Email/Password or Google Sign-In.
+*   **Password Management:** "Forgot Password" functionality utilizing Firebase's built-in reset email.
+*   **Role-Based Access Control (RBAC):** Firebase Custom Claims or a Firestore `users` collection field to distinguish between standard `user` and `admin` roles.
+
+### 4.2. User Profile & Account Management
+*   **Dashboard:** View order history, current order statuses, and tracking information.
+*   **Address Book:** Save, edit, and delete multiple shipping/billing addresses.
+*   **Profile Editing:** Update display name, profile picture, and contact details.
+
+### 4.3. Product Catalog & Browsing
+*   **Home Page:** Dynamic hero banners, featured products, "New Arrivals", and category highlights.
+*   **Product Listing Page (PLP):**
+    *   Grid/List layout of products.
+    *   **Filtering:** By category, price range, stock availability.
+    *   **Sorting:** By price (low/high), newest, popularity.
+    *   Pagination or infinite scrolling.
+*   **Product Detail Page (PDP):**
+    *   Image gallery (carousel with zoom).
+    *   Product title, descriptions, and dynamic pricing.
+    *   Variant selection (e.g., Color, Size).
+    *   Real-time stock availability check.
+    *   Customer reviews and ratings.
+*   **Search Engine:** Global search bar with instant visual autocomplete.
+
+### 4.4. Shopping Cart
+*   **Cart Actions:** Add items, remove items, update item quantities.
+*   **State Management:** Sync cart state to Firestore for authenticated users (allows cross-device shopping). For guests, persist cart in `localStorage` or cookies.
+*   **Price Calculation:** Real-time calculation of subtotal, estimated taxes, and shipping fees.
+
+### 4.5. Checkout & Order Processing
+*   **Multi-step Checkout Flow:**
+    1.  **Authentication Step:** Prompt guest to login or continue as guest.
+    2.  **Shipping:** Select existing address or enter a new one.
+    3.  **Shipping Method:** Standard, Priority, Express.
+    4.  **Payment:** Secure integration with the Razorpay payment gateway.
+*   **Order Creation:** Upon successful payment, an order document is atomically written to Firestore. Stock quantities for purchased items are decremented.
+*   **Confirmation:** Order success page and an automated email receipt (can be triggered via Firebase Extensions).
+
+### 4.6. Admin Control Panel (Protected Route)
+*   **Dashboard Analytics:** High-level metrics for Total Sales, Order Volume, and Recent Activity.
+*   **Inventory Management (CRUD):**
+    *   Add new products (providing external image URLs for media).
+    *   Edit existing product details, variants, and pricing.
+    *   Soft-delete/hide out-of-stock products.
+*   **Order Management:**
+    *   View all customer orders.
+    *   Update order statuses (`Pending`, `Processing`, `Shipped`, `Delivered`, `Cancelled`).
+*   **User Management:** View registered users and assign admin privileges.
+
+---
+
+## 5. Database Schema (Firestore Design)
+
+To optimize for NoSQL reads and real-time updates, the data will be structured into the following root collections:
+
+### `users`
+*   `uid` (String, Document ID)
+*   `email` (String)
+*   `displayName` (String)
+*   `role` (String: "user" | "admin")
+*   `createdAt` (Timestamp)
+*   `savedAddresses` (Array of Objects)
+
+### `products`
+*   `id` (String, Document ID)
+*   `name` (String)
+*   `description` (String)
+*   `price` (Number)
+*   `category` (String)
+*   `stock` (Number)
+*   `images` (Array of Strings/URLs)
+*   `variants` (Array of Objects, e.g., sizes/colors)
+*   `createdAt` (Timestamp)
+
+### `orders`
+*   `orderId` (String, Document ID)
+*   `customerUid` (String - linking to users)
+*   `items` (Array of Objects - snapshot of product data at purchase time)
+*   `subtotal` (Number)
+*   `tax` (Number)
+*   `totalAmount` (Number)
+*   `status` (String - "Processing", "Shipped", etc.)
+*   `shippingAddress` (Object)
+*   `createdAt` (Timestamp)
+
+---
+
+## 6. Non-Functional Requirements
+
+### 6.1. Performance
+*   Utilize Next.js `next/image` for automatic image orchestration and WebP formatting.
+*   Ensure First Contentful Paint (FCP) is under 1.5 seconds.
+*   Implement React Suspense and loading skeletons for seamless data fetching UI.
+
+### 6.2. SEO (Search Engine Optimization)
+*   All product pages (PDP) and category pages must be Server-Side Rendered (SSR) or trigger Incremental Static Regeneration (ISR) to ensure web crawlers can index the metadata.
+*   Dynamic Open Graph (OG) tags for sharing links on social media.
+
+### 6.3. Security
+*   **Firebase Core Security Rules:** Validate incoming data structures and restrict read/write access.
+    *   *Rule:* Users can only read/write their own orders and cart data.
+    *   *Rule:* Only authenticated Admins can write to the `products` collection.
+*   Environment variables must securely hold API keys (e.g., Razorpay secret keys should only exist in Next.js backend API routes).
+
+---
+
+## 7. Development Phases
+
+**Phase 1: Foundation & Auth**
+*   Initialize Next.js project and setup styling layer.
+*   Connect Firebase and implement Sign-up, Login, and Auth state listeners.
+
+**Phase 2: Product Discovery**
+*   Design and implement Firestore `products` schema.
+*   Build Homepage, Product Listing, Product Details, and Search functionality.
+
+**Phase 3: Shopping Cart & Checkout**
+*   Implement Cart logic and State Management.
+*   Integrate Payment Gateway (Razorpay) securely.
+*   Finalize order writing to Firestore.
+
+**Phase 4: Admin & Order Management**
+*   Develop Admin backend routes.
+*   Build UI for product inventory injection and order tracking.
+
+**Phase 5: Polish & Deployment**
+*   Add micro-animations, loading skeletons, and interactive hover states.
+*   Implement Firebase Security Rules.
+*   Deploy to Vercel.
