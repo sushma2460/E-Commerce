@@ -90,7 +90,6 @@ export default function Checkout() {
               
               clearCart();
               router.push(`/checkout/success?orderId=${docRef.id}`);
-            }
           } catch (dbErr) {
             console.error("Database write failed after payment", dbErr);
             alert("Payment recorded, but database update failed. Please contact support.");
