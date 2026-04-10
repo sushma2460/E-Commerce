@@ -21,10 +21,10 @@ export default function AdminUsers() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (isAdmin && db) {
+    if (isAdmin) {
       const fetchUsers = async () => {
         try {
-          const snapshot = await getDocs(collection(db, "users"));
+          const snapshot = await getDocs(collection(db!, "users"));
           const fetched: SystemUser[] = [];
           snapshot.forEach((d) => {
             const data = d.data();
@@ -42,10 +42,10 @@ export default function AdminUsers() {
   }, [isAdmin]);
 
   const toggleAdmin = async (userId: string, currentRole: string) => {
-    if (!db) return;
+
     const newRole = currentRole === "admin" ? "user" : "admin";
     try {
-      await updateDoc(doc(db, "users", userId), { role: newRole });
+      await updateDoc(doc(db!, "users", userId), { role: newRole });
       setUsers(prev => prev.map(u => u.id === userId ? { ...u, role: newRole as any } : u));
     } catch (e) {
       console.error("Failed to update role", e);
@@ -102,18 +102,16 @@ export default function AdminUsers() {
                     <p className="text-slate-500 text-xs font-mono mt-1">{u.email}</p>
                   </td>
                   <td className="p-6">
-                    <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${
-                      u.role === "admin" ? "bg-purple-500/20 text-purple-400 border border-purple-500/30" : "bg-slate-500/20 text-slate-400 border border-white/10"
-                    }`}>
+                    <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${u.role === "admin" ? "bg-purple-500/20 text-purple-400 border border-purple-500/30" : "bg-slate-500/20 text-slate-400 border border-white/10"
+                      }`}>
                       {u.role || "user"}
                     </span>
                   </td>
                   <td className="p-6 text-right">
-                    <button 
+                    <button
                       onClick={() => toggleAdmin(u.id, u.role || "user")}
-                      className={`text-xs font-bold py-2 px-4 rounded-lg transition-all ${
-                        u.role === "admin" ? "text-rose-400 hover:bg-rose-500/10" : "text-indigo-400 hover:bg-indigo-500/10"
-                      }`}
+                      className={`text-xs font-bold py-2 px-4 rounded-lg transition-all ${u.role === "admin" ? "text-rose-400 hover:bg-rose-500/10" : "text-indigo-400 hover:bg-indigo-500/10"
+                        }`}
                     >
                       {u.role === "admin" ? "Revoke Admin" : "Promote to Admin"}
                     </button>
