@@ -156,7 +156,7 @@ export default function Checkout() {
                 <div className="grid grid-cols-1 gap-3 mb-6">
                   <p className="text-xs font-bold text-slate-500 uppercase tracking-widest ml-1">Quick Select Saved Address</p>
                   <div className="flex flex-wrap gap-2">
-                    {userData.savedAddresses.map((sa: any, idx: number) => (
+                    {userData?.savedAddresses?.map((sa: any, idx: number) => (
                       <button
                         key={idx}
                         type="button"
