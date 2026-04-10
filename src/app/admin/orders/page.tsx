@@ -39,8 +39,9 @@ export default function AdminOrders() {
   }, []);
 
   const fetchOrders = async () => {
+    if (!db) return;
+    setLoading(true);
     try {
-      if (!db) return;
       const q = query(collection(db, "orders"), orderBy("createdAt", "desc"));
       const snapshot = await getDocs(q);
       const fetched: Order[] = [];

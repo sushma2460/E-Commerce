@@ -24,6 +24,7 @@ export default function AdminUsers() {
     if (isAdmin && db) {
       const fetchUsers = async () => {
         try {
+          if (!db) return;
           const snapshot = await getDocs(collection(db, "users"));
           const fetched: SystemUser[] = [];
           snapshot.forEach((d) => {

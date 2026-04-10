@@ -75,8 +75,8 @@ export default function Checkout() {
         handler: async function (response: any) {
           // 3. Payment Success - Fire to our Firestore DB
           try {
-            if (db) {
-              const docRef = await addDoc(collection(db, "orders"), {
+            if (!db) throw new Error("Database not initialized");
+            const docRef = await addDoc(collection(db, "orders"), {
                 userId: user?.uid || "guest",
                 userEmail: user?.email || "guest@example.com",
                 items: cart,
