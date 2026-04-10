@@ -143,7 +143,7 @@ export default function Checkout() {
           <form id="checkout-form" onSubmit={handlePayment} className="glass-card p-6 md:p-8 space-y-6">
             <div className="flex items-center justify-between border-b border-white/10 pb-4 mb-4">
               <h3 className="text-xl font-semibold text-white">Shipping Address</h3>
-              {userData?.savedAddresses?.length > 0 && (
+              {(userData?.savedAddresses?.length ?? 0) > 0 && (
                 <div className="flex gap-2">
                   <span className="text-xs text-indigo-400 font-bold uppercase tracking-widest bg-indigo-500/10 px-2 py-1 rounded">Profile Sync Active</span>
                 </div>
@@ -152,7 +152,7 @@ export default function Checkout() {
             
             {/* Address Form */}
             <div className="space-y-4">
-              {userData?.savedAddresses?.length > 0 && (
+              {(userData?.savedAddresses?.length ?? 0) > 0 && (
                 <div className="grid grid-cols-1 gap-3 mb-6">
                   <p className="text-xs font-bold text-slate-500 uppercase tracking-widest ml-1">Quick Select Saved Address</p>
                   <div className="flex flex-wrap gap-2">
