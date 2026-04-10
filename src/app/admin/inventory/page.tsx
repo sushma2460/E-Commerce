@@ -20,12 +20,11 @@ export default function AdminInventory() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!db) return;
     setLoading(true);
     setSuccess(false);
 
     try {
-      await addDoc(collection(db!, "products"), {
+      await addDoc(collection(db, "products"), {
         name: product.name,
         price: parseFloat(product.price),
         category: product.category,

@@ -34,7 +34,7 @@ export default function UserProfile() {
   });
 
   useEffect(() => {
-    if (user && db) {
+    if (user) {
       const q = query(
         collection(db, "orders"),
         where("userEmail", "==", user.email)
@@ -68,7 +68,7 @@ export default function UserProfile() {
 
   const handleSaveAddress = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!user || !db) return;
+    if (!user) return;
 
     const currentAddresses = userData?.savedAddresses || [];
     const updatedAddresses = [...currentAddresses, newAddress];
@@ -86,7 +86,7 @@ export default function UserProfile() {
   };
 
   const handleDeleteAddress = async (index: number) => {
-    if (!user || !db || !userData?.savedAddresses) return;
+    if (!user || !userData?.savedAddresses) return;
     const updatedAddresses = userData.savedAddresses.filter((_: any, i: number) => i !== index);
     try {
       await setDoc(doc(db, "users", user.uid), {

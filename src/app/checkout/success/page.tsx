@@ -15,10 +15,10 @@ export default function OrderSuccess() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (orderId && db) {
+    if (orderId) {
       const fetchOrder = async () => {
         try {
-          const docSnap = await getDoc(doc(db, "orders", orderId));
+          const docSnap = await getDoc(doc(db, orderId.startsWith("ord_") ? "orders" : "orders", orderId));
           if (docSnap.exists()) {
             setOrder(docSnap.data());
           }

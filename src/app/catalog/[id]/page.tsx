@@ -13,7 +13,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id } = await params;
   
   try {
-    if (!db) return { title: "Product Not Found" };
     const docRef = doc(db, "products", id);
     const docSnap = await getDoc(docRef);
     
@@ -39,7 +38,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function ProductPage({ params }: Props) {
   const { id } = await params;
   
-  if (!db) return null;
   const docRef = doc(db, "products", id);
   const docSnap = await getDoc(docRef);
   

@@ -24,8 +24,7 @@ export default function AdminUsers() {
     if (isAdmin && db) {
       const fetchUsers = async () => {
         try {
-          if (!db) return;
-          const snapshot = await getDocs(collection(db!, "users"));
+          const snapshot = await getDocs(collection(db, "users"));
           const fetched: SystemUser[] = [];
           snapshot.forEach((d) => {
             const data = d.data();
@@ -46,7 +45,7 @@ export default function AdminUsers() {
     if (!db) return;
     const newRole = currentRole === "admin" ? "user" : "admin";
     try {
-      await updateDoc(doc(db!, "users", userId), { role: newRole });
+      await updateDoc(doc(db, "users", userId), { role: newRole });
       setUsers(prev => prev.map(u => u.id === userId ? { ...u, role: newRole as any } : u));
     } catch (e) {
       console.error("Failed to update role", e);
