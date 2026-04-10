@@ -25,7 +25,7 @@ export default function AdminInventory() {
     setSuccess(false);
 
     try {
-      await addDoc(collection(db, "products"), {
+      await addDoc(collection(db!, "products"), {
         name: product.name,
         price: parseFloat(product.price),
         category: product.category,

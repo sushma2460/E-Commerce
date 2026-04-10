@@ -76,7 +76,7 @@ export default function Checkout() {
           // 3. Payment Success - Fire to our Firestore DB
           try {
             if (!db) throw new Error("Database not initialized");
-            const docRef = await addDoc(collection(db, "orders"), {
+            const docRef = await addDoc(collection(db!, "orders"), {
                 userId: user?.uid || "guest",
                 userEmail: user?.email || "guest@example.com",
                 items: cart,

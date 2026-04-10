@@ -42,7 +42,7 @@ export default function AdminOrders() {
     if (!db) return;
     setLoading(true);
     try {
-      const q = query(collection(db, "orders"), orderBy("createdAt", "desc"));
+      const q = query(collection(db!, "orders"), orderBy("createdAt", "desc"));
       const snapshot = await getDocs(q);
       const fetched: Order[] = [];
       snapshot.forEach((doc) => {
@@ -65,7 +65,7 @@ export default function AdminOrders() {
     if (!db) return;
     setActionLoading(orderId);
     try {
-      await updateDoc(doc(db, "orders", orderId), {
+      await updateDoc(doc(db!, "orders", orderId), {
         status: newStatus,
       });
       await fetchOrders();
@@ -91,7 +91,7 @@ export default function AdminOrders() {
     if (!db || !editingOrder) return;
     setActionLoading(editingOrder.id);
     try {
-      await updateDoc(doc(db, "orders", editingOrder.id), {
+      await updateDoc(doc(db!, "orders", editingOrder.id), {
         userEmail: editForm.userEmail,
         shippingAddress: {
           street: editForm.street,
